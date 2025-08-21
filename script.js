@@ -1,14 +1,14 @@
 
-const Gameboard = () => {
+const createGameboard = () => {
     const board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
 }
 
-const Player = (name, piece) => {
+const createPlayer = (name, piece) => {
     const getName = () => name;
     const getPiece = () => piece;
     return { getName, getPiece };
 }
 
-const Game = (players) => {
+const createGame = () => {
     const board = Gameboard();
 }
