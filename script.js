@@ -8,3 +8,7 @@ const Player = (name, piece) => {
     const getPiece = () => piece;
     return { getName, getPiece };
 }
+
+const Game = (players) => {
+    const board = Gameboard();
+}
