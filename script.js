@@ -1,8 +1,8 @@
 
 const createGameboard = () => {
-    const board = [["", "", ""], ["", "", ""], ["", "", ""]];
+    const board = [["00", "01", "02"], ["10", "11", "12"], ["20", "21", "22"]];
     const placePiece = (row, col, piece) => {
-        if (board[row][col]) {
+        if (board[row][col].length === 1) {
             return false;
         }
         board[row][col] = piece;
@@ -11,7 +11,7 @@ const createGameboard = () => {
 
     const checkEqualColumns = () => {
         for (let i = 0; i < 3; i++) {
-            if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
+            if (board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
                 return i;
             }
         }
@@ -20,14 +20,24 @@ const createGameboard = () => {
 
     const checkEqualRows = () => {
         for (let i = 0; i < 3; i++) {
-            if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
+            if (board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
                 return i;
             }
         }
         return -1;
     }
 
-    return { placePiece, checkEqualColumns, checkEqualRows }
+    const checkEqualDiagonals = () => {
+        if (board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+            return 1;
+        } else if (board[2][0] === board[1][1] && board[1][1] === board[0][2]) {
+            return 2;
+        } else {
+            return -1;
+        }
+    }
+
+    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals }
 }
 
 const createPlayer = (name, piece) => {
@@ -48,7 +58,8 @@ const createGame = (firstName, secondName) => {
         placeBoardPiece: board.placePiece,
         getCurrentPlayer, increaseRound,
         checkColumns: board.checkEqualColumns,
-        checkRows: board.checkEqualRows
+        checkRows: board.checkEqualRows,
+        checkDiagonals: board.checkEqualDiagonals
     }
 }
 
@@ -72,7 +83,7 @@ const DisplayController = (function () {
         if (game.placeBoardPiece(row, col, player.getPiece())) {
             e.target.textContent = player.getPiece();
             game.increaseRound();
-            console.log(game.checkRows());
+            console.log(game.checkDiagonals());
         }
     }
 
