@@ -8,7 +8,17 @@ const createGameboard = () => {
         board[row][col] = piece;
         return true;
     }
-    return { placePiece }
+
+    const checkEqualColumns = () => {
+        for (let i = 0; i < 3; i++) {
+            if (board[0][i] === board[1][i] && board[2][i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    return { placePiece, checkEqualColumns }
 }
 
 const createPlayer = (name, piece) => {
@@ -18,14 +28,14 @@ const createPlayer = (name, piece) => {
 }
 
 const createGame = (firstName, secondName) => {
+    let round = 1;
     const board = createGameboard();
     const playerOne = createPlayer(firstName, "x");
     const playerTwo = createPlayer(secondName, "o");
-    let round = 1;
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
 
-    return { placeBoardPiece: board.placePiece, getCurrentPlayer, increaseRound }
+    return { placeBoardPiece: board.placePiece, getCurrentPlayer, increaseRound, checkColumns: board.checkEqualColumns }
 }
 
 const DisplayController = (function () {
@@ -48,8 +58,10 @@ const DisplayController = (function () {
         if (game.placeBoardPiece(row, col, player.getPiece())) {
             e.target.textContent = player.getPiece();
             game.increaseRound();
+            console.log(game.checkColumns());
         }
     }
+
     const addGridButtonEvents = () => {
         const boardButtons = document.querySelectorAll(".grid button");
         for (const button of boardButtons) {
@@ -60,7 +72,6 @@ const DisplayController = (function () {
 })();
 
 const ElementCreator = (function () {
-
     const createGridButton = (row, col) => {
         const button = document.createElement("button");
         button.setAttribute("type", "button");
