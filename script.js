@@ -11,14 +11,23 @@ const createGameboard = () => {
 
     const checkEqualColumns = () => {
         for (let i = 0; i < 3; i++) {
-            if (board[0][i] === board[1][i] && board[2][i]) {
+            if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
                 return i;
             }
         }
         return -1;
     }
 
-    return { placePiece, checkEqualColumns }
+    const checkEqualRows = () => {
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    return { placePiece, checkEqualColumns, checkEqualRows }
 }
 
 const createPlayer = (name, piece) => {
@@ -35,7 +44,12 @@ const createGame = (firstName, secondName) => {
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
 
-    return { placeBoardPiece: board.placePiece, getCurrentPlayer, increaseRound, checkColumns: board.checkEqualColumns }
+    return {
+        placeBoardPiece: board.placePiece,
+        getCurrentPlayer, increaseRound,
+        checkColumns: board.checkEqualColumns,
+        checkRows: board.checkEqualRows
+    }
 }
 
 const DisplayController = (function () {
@@ -58,7 +72,7 @@ const DisplayController = (function () {
         if (game.placeBoardPiece(row, col, player.getPiece())) {
             e.target.textContent = player.getPiece();
             game.increaseRound();
-            console.log(game.checkColumns());
+            console.log(game.checkRows());
         }
     }
 
