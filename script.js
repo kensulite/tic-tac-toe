@@ -54,12 +54,34 @@ const createGame = (firstName, secondName) => {
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
 
+    const checkGameOver = () => {
+        const columnsCheck = board.checkEqualColumns();
+        const rowsCheck = board.checkEqualRows();
+        const diagonalsCheck = board.checkEqualDiagonals();
+        if (columnsCheck >= 0) {
+            return {
+                direction: "column",
+                position: columnsCheck
+            }
+        } else if (rowsCheck >= 0) {
+            return {
+                direction: "row",
+                position: rowsCheck
+            }
+        } else if (diagonalsCheck >= 0) {
+            return {
+                direction: "diagonal",
+                position: diagonalsCheck
+            }
+        } else {
+            return null;
+        }
+    }
+
     return {
         placeBoardPiece: board.placePiece,
         getCurrentPlayer, increaseRound,
-        checkColumns: board.checkEqualColumns,
-        checkRows: board.checkEqualRows,
-        checkDiagonals: board.checkEqualDiagonals
+        checkGameOver
     }
 }
 
@@ -83,8 +105,15 @@ const DisplayController = (function () {
         if (game.placeBoardPiece(row, col, player.getPiece())) {
             e.target.textContent = player.getPiece();
             game.increaseRound();
-            console.log(game.checkDiagonals());
+            const gameOver = game.checkGameOver();
+            if (gameOver) {
+                disableBoardButtons();
+            }
         }
+    }
+
+    const endGame = () => {
+        disableBoardButtons();
     }
 
     const addGridButtonEvents = () => {
@@ -93,6 +122,15 @@ const DisplayController = (function () {
             button.addEventListener("click", handleBoardButtonClick);
         }
     }
+
+
+    const disableBoardButtons = () => {
+        const boardButtons = document.querySelectorAll(".grid button")
+        for (const button of boardButtons) {
+            button.disabled = true;
+        }
+    }
+
     return { addGridButtonEvents, fillGrid }
 })();
 
