@@ -201,12 +201,22 @@ const DisplayController = (function () {
             case "row":
                 decorateRow(state.position);
                 break;
+            case "column":
+                decorateColumn(state.position);
+                break;
         }
     }
 
     const decorateRow = (index) => {
-        const rowButtons = document.querySelectorAll(`[data-row="${index}"]`);
-        for (const button of rowButtons) {
+        const buttons = document.querySelectorAll(`[data-row="${index}"]`);
+        for (const button of buttons) {
+            button.classList.add(`${button.textContent}-border`);
+        }
+    }
+
+    const decorateColumn = (index) => {
+        const buttons = document.querySelectorAll(`[data-col="${index}"]`);
+        for (const button of buttons) {
             button.classList.add(`${button.textContent}-border`);
         }
     }
