@@ -8,14 +8,26 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: #1F1F1F;
 }
 
 main {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    color: white;
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(3, 150px);
     grid-template-rows: repeat(3, 150px);
+}
+
+.controls {
+    display: flex;
+    gap: 3rem;
 }

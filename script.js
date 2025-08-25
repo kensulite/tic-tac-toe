@@ -40,10 +40,12 @@ const createGameboard = () => {
     return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals }
 }
 
-const createPlayer = (name, piece) => {
+const createPlayer = (name, piece, score = 0) => {
     const getName = () => name;
     const getPiece = () => piece;
-    return { getName, getPiece };
+    const getScore = () => score;
+    const increaseScore = () => score += 1;
+    return { getName, getPiece, getScore, increaseScore };
 }
 
 const createGame = (firstName, secondName) => {
@@ -53,6 +55,7 @@ const createGame = (firstName, secondName) => {
     const playerTwo = createPlayer(secondName, "o");
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
+    const getRound = () => round;
 
     const checkGameOver = () => {
         const columnsCheck = board.checkEqualColumns();
@@ -80,14 +83,45 @@ const createGame = (firstName, secondName) => {
 
     return {
         placeBoardPiece: board.placePiece,
-        getCurrentPlayer, increaseRound,
-        checkGameOver
+        getCurrentPlayer,
+        increaseRound,
+        checkGameOver,
+        getRound
     }
 }
 
 const DisplayController = (function () {
-    const game = createGame("default1", "default2");
+    let game = createGame("default1", "default2");
     const grid = document.querySelector(".grid");
+
+    const initialize = () => {
+        fillGrid();
+        addGridButtonEvents();
+        alternateBoardButtons(true);
+        addStartEvent();
+    }
+
+    const startGame = () => {
+        const playerOneName = document.querySelector(".playerOne input").value;
+        const playerTwoName = document.querySelector(".playerTwo input").value;
+        alternateBoardButtons(false);
+        alternateUserInputs(true);
+        game = createGame(
+            playerOneName ? playerOneName : "Yuzuki Yukari",
+            playerTwoName ? playerTwoName : "Megpoid"
+        );
+    }
+    const alternateUserInputs = (state) => {
+        const inputs = document.querySelectorAll(".input");
+        for (const input of inputs) {
+            input.disabled = state;
+        }
+    }
+
+    const addStartEvent = () => {
+        const startButton = document.querySelector(".start");
+        startButton.addEventListener("click", startGame);
+    }
 
     const fillGrid = () => {
         for (let i = 0; i < 3; i++) {
@@ -113,7 +147,7 @@ const DisplayController = (function () {
     }
 
     const endGame = () => {
-        disableBoardButtons();
+        alternateBoardButtons(true);
     }
 
     const addGridButtonEvents = () => {
@@ -124,14 +158,14 @@ const DisplayController = (function () {
     }
 
 
-    const disableBoardButtons = () => {
+    const alternateBoardButtons = (state) => {
         const boardButtons = document.querySelectorAll(".grid button")
         for (const button of boardButtons) {
-            button.disabled = true;
+            button.disabled = state;
         }
     }
 
-    return { addGridButtonEvents, fillGrid }
+    return { addGridButtonEvents, fillGrid, initialize }
 })();
 
 const ElementCreator = (function () {
@@ -146,5 +180,4 @@ const ElementCreator = (function () {
     return { createGridButton }
 })();
 
-DisplayController.fillGrid();
-DisplayController.addGridButtonEvents();
+DisplayController.initialize();
