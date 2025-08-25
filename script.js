@@ -204,6 +204,9 @@ const DisplayController = (function () {
             case "column":
                 decorateColumn(state.position);
                 break;
+            case "diagonal":
+                decorateDiagonal(state.position);
+                break;
         }
     }
 
@@ -219,6 +222,24 @@ const DisplayController = (function () {
         for (const button of buttons) {
             button.classList.add(`${button.textContent}-border`);
         }
+    }
+
+    const decorateDiagonal = (side) => {
+        let indexes;
+        if (side === 2) {
+            indexes = [[0, 2], [1, 1], [2, 0]];
+        } else {
+            indexes = [[0, 0], [1, 1], [2, 2]];
+        }
+        const buttons = [];
+        for (const pair of indexes) {
+            buttons.push(document.querySelector(`[data-row="${pair[0]}"][data-col="${pair[1]}"]`));
+        }
+        for (const button of buttons) {
+            button.classList.add(`${button.textContent}-border`);
+        }
+        console.log(buttons);
+
     }
 
     const addGridButtonEvents = () => {
