@@ -107,7 +107,7 @@ const DisplayController = (function () {
             game.increaseRound();
             const gameOver = game.checkGameOver();
             if (gameOver) {
-                disableBoardButtons();
+                endGame();
             }
         }
     }
