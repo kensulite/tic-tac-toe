@@ -39,9 +39,8 @@ const createGameboard = () => {
 
     const checkBoardFull = () => board.flat().every((slot) => slot.length === 1);
 
-    const printBoard = () => console.log(board);
 
-    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals, checkBoardFull, printBoard }
+    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals, checkBoardFull }
 }
 
 const createPlayer = (name, piece, score = 0) => {
@@ -238,7 +237,6 @@ const DisplayController = (function () {
         for (const button of buttons) {
             button.classList.add(`${button.textContent}-border`);
         }
-        console.log(buttons);
 
     }
 
