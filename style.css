@@ -30,15 +30,25 @@ main {
 
 .controls {
     display: flex;
-    gap: 3rem;
+    gap: 2rem;
+    align-items: center;
+}
+
+.controls input {
+    background-color: transparent;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.controls p {
+    color: white;
 }
 
 .grid button {
     background-color: transparent;
     font-size: 3rem;
 }
-
-.grid button:disabled {}
 
 .x {
     color: #fff;
@@ -64,4 +74,14 @@ main {
         0 0 92px #0fa,
         0 0 102px #0fa,
         0 0 151px #0fa;
+}
+
+.start {
+    background-color: transparent;
+    padding: 0.5rem;
+    text-transform: uppercase;
+}
+
+.start:is(:not(:disabled)) {
+    color: white;
 }
