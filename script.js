@@ -39,7 +39,9 @@ const createGameboard = () => {
 
     const checkBoardFull = () => board.flat().every((slot) => slot.length === 1);
 
-    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals, checkBoardFull }
+    const printBoard = () => console.log(board);
+
+    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals, checkBoardFull, printBoard }
 }
 
 const createPlayer = (name, piece, score = 0) => {
@@ -58,11 +60,10 @@ const createGame = (firstName, secondName) => {
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
     const getRound = () => round;
-    const startNewRound = () => {
-        increaseRound();
-        board = createGameboard;
+    const resetBoard = () => {
+        board = createGameboard();
     }
-
+    const getBoard = () => board;
     const checkGameOver = () => {
         const columnsCheck = board.checkEqualColumns();
         const rowsCheck = board.checkEqualRows();
@@ -92,19 +93,29 @@ const createGame = (firstName, secondName) => {
         }
     }
 
+    const increaseCurrentPlayerScore = () => {
+        const currentPlayer = getCurrentPlayer();
+        currentPlayer.increaseScore();
+    }
+
+    const getPlayerOneScore = () => playerOne.getScore();
+    const getPlayerTwoScore = () => playerTwo.getScore();
+
     return {
-        placeBoardPiece: board.placePiece,
+        getBoard,
         getCurrentPlayer,
         increaseRound,
         checkGameOver,
         getRound,
-        startNewRound
+        resetBoard,
+        increaseCurrentPlayerScore,
+        getPlayerOneScore,
+        getPlayerTwoScore
     }
 }
 
 const DisplayController = (function () {
     let game = createGame("default1", "default2");
-    const grid = document.querySelector(".grid");
 
     const initialize = () => {
         fillGrid();
@@ -114,15 +125,15 @@ const DisplayController = (function () {
     }
 
     const startGame = () => {
-        if (game.getRound > 1) {
-            game.startNewRound();
-        } else {
+        if (game.getRound() === 1) {
             const playerOneName = document.querySelector(".playerOne input").value;
             const playerTwoName = document.querySelector(".playerTwo input").value;
             game = createGame(
                 playerOneName ? playerOneName : "Yuzuki Yukari",
                 playerTwoName ? playerTwoName : "Megpoid"
             );
+        } else {
+            game.resetBoard();
         }
         resetGrid();
         alternateBoardButtons(false);
@@ -134,7 +145,6 @@ const DisplayController = (function () {
         const startButton = document.querySelector(".start");
         startButton.disabled = state;
     }
-
 
     const alternateUserInputs = (state) => {
         const inputs = document.querySelectorAll("input");
@@ -149,6 +159,7 @@ const DisplayController = (function () {
     }
 
     const fillGrid = () => {
+        const grid = document.querySelector(".grid");
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 const gridButton = ElementCreator.createGridButton(i, j);
@@ -161,25 +172,34 @@ const DisplayController = (function () {
         const row = e.target.getAttribute("data-row");
         const col = e.target.getAttribute("data-col");
         const player = game.getCurrentPlayer();
-        if (game.placeBoardPiece(row, col, player.getPiece())) {
+        if (game.getBoard().placePiece(row, col, player.getPiece())) {
             e.target.textContent = player.getPiece();
-            game.increaseRound();
+            e.target.classList.add(game.getCurrentPlayer().getPiece());
             const gameOver = game.checkGameOver();
             if (gameOver) {
-                endGame();
+                if (gameOver.position !== "draw") {
+                    game.increaseCurrentPlayerScore();
+                }
+                endGame(gameOver);
             }
+            game.increaseRound();
         }
     }
 
     const resetGrid = () => {
+        const grid = document.querySelector(".grid");
         grid.replaceChildren();
         fillGrid();
         addGridButtonEvents();
     }
 
-    const endGame = () => {
+    const endGame = (state) => {
         alternateStartButton(false);
         alternateBoardButtons(true);
+        updateScores();
+        switch (state.position) {
+
+        }
     }
 
     const addGridButtonEvents = () => {
@@ -189,6 +209,12 @@ const DisplayController = (function () {
         }
     }
 
+    const updateScores = () => {
+        const firstScore = document.querySelector(".playerOne.score");
+        const secondScore = document.querySelector(".playerTwo.score");
+        firstScore.textContent = game.getPlayerOneScore();
+        secondScore.textContent = game.getPlayerTwoScore();
+    }
 
     const alternateBoardButtons = (state) => {
         const boardButtons = document.querySelectorAll(".grid button")

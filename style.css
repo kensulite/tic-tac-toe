@@ -31,3 +31,11 @@ main {
     display: flex;
     gap: 3rem;
 }
+
+.x {
+    color: red;
+}
+
+.o {
+    color: green;
+}
