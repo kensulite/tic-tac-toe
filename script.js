@@ -177,7 +177,7 @@ const DisplayController = (function () {
             e.target.classList.add(game.getCurrentPlayer().getPiece());
             const gameOver = game.checkGameOver();
             if (gameOver) {
-                if (gameOver.position !== "draw") {
+                if (gameOver.direction !== "draw") {
                     game.increaseCurrentPlayerScore();
                 }
                 endGame(gameOver);
