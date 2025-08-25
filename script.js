@@ -197,8 +197,17 @@ const DisplayController = (function () {
         alternateStartButton(false);
         alternateBoardButtons(true);
         updateScores();
-        switch (state.position) {
+        switch (state.direction) {
+            case "row":
+                decorateRow(state.position);
+                break;
+        }
+    }
 
+    const decorateRow = (index) => {
+        const rowButtons = document.querySelectorAll(`[data-row="${index}"]`);
+        for (const button of rowButtons) {
+            button.classList.add(`${button.textContent}-border`);
         }
     }
 
