@@ -37,7 +37,9 @@ const createGameboard = () => {
         }
     }
 
-    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals }
+    const checkBoardFull = () => board.flat().every((slot) => slot.length === 1);
+
+    return { placePiece, checkEqualColumns, checkEqualRows, checkEqualDiagonals, checkBoardFull }
 }
 
 const createPlayer = (name, piece, score = 0) => {
@@ -50,12 +52,16 @@ const createPlayer = (name, piece, score = 0) => {
 
 const createGame = (firstName, secondName) => {
     let round = 1;
-    const board = createGameboard();
+    let board = createGameboard();
     const playerOne = createPlayer(firstName, "x");
     const playerTwo = createPlayer(secondName, "o");
     const getCurrentPlayer = () => round % 2 === 0 ? playerOne : playerTwo;
     const increaseRound = () => round += 1;
     const getRound = () => round;
+    const startNewRound = () => {
+        increaseRound();
+        board = createGameboard;
+    }
 
     const checkGameOver = () => {
         const columnsCheck = board.checkEqualColumns();
@@ -76,6 +82,11 @@ const createGame = (firstName, secondName) => {
                 direction: "diagonal",
                 position: diagonalsCheck
             }
+        } else if (board.checkBoardFull()) {
+            return {
+                direction: "draw",
+                position: -1
+            }
         } else {
             return null;
         }
@@ -86,7 +97,8 @@ const createGame = (firstName, secondName) => {
         getCurrentPlayer,
         increaseRound,
         checkGameOver,
-        getRound
+        getRound,
+        startNewRound
     }
 }
 
@@ -102,17 +114,30 @@ const DisplayController = (function () {
     }
 
     const startGame = () => {
-        const playerOneName = document.querySelector(".playerOne input").value;
-        const playerTwoName = document.querySelector(".playerTwo input").value;
+        if (game.getRound > 1) {
+            game.startNewRound();
+        } else {
+            const playerOneName = document.querySelector(".playerOne input").value;
+            const playerTwoName = document.querySelector(".playerTwo input").value;
+            game = createGame(
+                playerOneName ? playerOneName : "Yuzuki Yukari",
+                playerTwoName ? playerTwoName : "Megpoid"
+            );
+        }
+        resetGrid();
         alternateBoardButtons(false);
         alternateUserInputs(true);
-        game = createGame(
-            playerOneName ? playerOneName : "Yuzuki Yukari",
-            playerTwoName ? playerTwoName : "Megpoid"
-        );
+        alternateStartButton(true);
     }
+
+    const alternateStartButton = (state) => {
+        const startButton = document.querySelector(".start");
+        startButton.disabled = state;
+    }
+
+
     const alternateUserInputs = (state) => {
-        const inputs = document.querySelectorAll(".input");
+        const inputs = document.querySelectorAll("input");
         for (const input of inputs) {
             input.disabled = state;
         }
@@ -146,7 +171,14 @@ const DisplayController = (function () {
         }
     }
 
+    const resetGrid = () => {
+        grid.replaceChildren();
+        fillGrid();
+        addGridButtonEvents();
+    }
+
     const endGame = () => {
+        alternateStartButton(false);
         alternateBoardButtons(true);
     }
 
